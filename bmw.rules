@@ -42,3 +42,14 @@ then
     val rc =  executeCommandLine("/usr/bin/python3 /etc/openhab2/scripts/bmwcdapi.py -e unlock", 120000)
     logInfo("bmwcdapi", rc)
 end
+
+rule "bmw updatePosition"
+when
+    Item Bmw_positionLng changed or
+    Item Bmw_positionLat changed
+then
+    logInfo("bmwcdapi", "Position changed")
+    val position_tmp = new PointType(Bmw_positionLat.state as DecimalType, Bmw_positionLng.state as DecimalType)
+    Bmw_position.postUpdate(position_tmp)
+    logInfo("bmwcdapi", "Current position: " + Bmw_position)
+end
